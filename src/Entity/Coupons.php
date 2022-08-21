@@ -2,52 +2,51 @@
 
 namespace App\Entity;
 
+use App\Entity\Trait\CreatedAtTrait;
 use App\Repository\CouponsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use PHPUnit\TextUI\XmlConfiguration\CodeCoverage\Report\Text;
 
 #[ORM\Entity(repositoryClass: CouponsRepository::class)]
 class Coupons
 {
+    use CreatedAtTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'integer')]
+    private $id;
 
-    #[ORM\Column(length: 10, unique: true)]
-    private ?string $code = null;
+    #[ORM\Column(type: 'string', length: 10, unique: true)]
+    private $code;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $description = null;
-    
-    #[ORM\Column]
-    private ?int $discount = null;
+    #[ORM\Column(type: 'text')]
+    private $description;
 
-    #[ORM\Column]
-    private ?int $max_usage = null;
+    #[ORM\Column(type: 'integer')]
+    private $discount;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private ?\DateTimeInterface $validity = null;
+    #[ORM\Column(type: 'integer')]
+    private $max_usage;
 
-    #[ORM\Column]
-    private ?bool $is_valid = null;
+    #[ORM\Column(type: 'datetime')]
+    private $validity;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $created_at = null;
+    #[ORM\Column(type: 'boolean')]
+    private $is_valid;
 
-    #[ORM\ManyToOne(inversedBy: 'coupons')]
+    #[ORM\ManyToOne(targetEntity: CouponsTypes::class, inversedBy: 'coupons')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?CouponsTypes $coupons_types = null;
+    private $coupons_types;
 
     #[ORM\OneToMany(mappedBy: 'coupons', targetEntity: Orders::class)]
-    private Collection $orders;
+    private $orders;
 
     public function __construct()
     {
         $this->orders = new ArrayCollection();
+        $this->created_at = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -115,7 +114,7 @@ class Coupons
         return $this;
     }
 
-    public function isIsValid(): ?bool
+    public function getIsValid(): ?bool
     {
         return $this->is_valid;
     }
@@ -123,18 +122,6 @@ class Coupons
     public function setIsValid(bool $is_valid): self
     {
         $this->is_valid = $is_valid;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->created_at;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $created_at): self
-    {
-        $this->created_at = $created_at;
 
         return $this;
     }
@@ -152,7 +139,7 @@ class Coupons
     }
 
     /**
-     * @return Collection<int, Orders>
+     * @return Collection|Orders[]
      */
     public function getOrders(): Collection
     {
@@ -162,7 +149,7 @@ class Coupons
     public function addOrder(Orders $order): self
     {
         if (!$this->orders->contains($order)) {
-            $this->orders->add($order);
+            $this->orders[] = $order;
             $order->setCoupons($this);
         }
 
