@@ -1,0 +1,74 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+  <section>
+      <div class="container py-5">
+        <div class="row">
+     
+              {% include "_messages_flash.html.twig" %}
+
+            <div class="col-xs-12 col-md-6">
+
+                <div class="">
+                   <div class="bg-dark">
+                    <img src="{{ product.imagePath }}" class="card-img image_category" alt="image_category">
+                </div>
+                
+            </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <br>
+                   <h5 class="card-title">{{ product.name }}</h5>
+                <p>{{ product.price | priceEuro }}</p>
+          
+            <p>{{ product.contenu }}</p>
+            <hr>
+                  <a class="btn btn-outline-dark" href="{{ path('home') }}">Revenir à l'accueil</a>
+              
+              <hr>
+                    <a href="{{ path('customer_category_index') }}" class="btn btn-outline-dark">Retour aux catégories</a>
+                     <hr>
+            
+              <a class="btn btn-outline-dark" href="mailto:amelie.factory@outlook.fr">Pour toute commande, c'est ici</a>
+               
+              
+            </div>
+
+        </div>
+    </div>
+
+  </section>
+
+   <section>
+ 
+    <div class="container py-5">
+      <hr>
+        <div class="row">
+            <div class="col-12">
+                <h3 class="text-center">Suggestions</h3>
+            </div>  
+
+            {% for product in suggestedProducts %}
+
+           <div class="col-sm-12 col-lg-4 mt-3">
+              
+             <div class="card bg-dark text-white">
+                    <img src="{{ product.imagePath }}" class="card-img" alt="image_category">
+                  <div class="card-img-overlay">
+                      
+                    </div>
+                </div>
+                  <h5 class="card-title">{{ product.name }}</h5>
+                        <p>{{ product.price | priceEuro }}</p>
+                        <a href="{{ path('boutique_product_detail',{'id': product.id} ) }}" class="btn btn-outline-dark btn-lg w-100">Consulter</a>
+            </div>
+              
+          
+            {% endfor %}
+
+        </div>
+    </div>
+  </section>
+
+{% endblock %}
